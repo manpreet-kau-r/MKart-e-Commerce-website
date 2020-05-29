@@ -1,0 +1,156 @@
+<!-- Basic.html -->
+{% extends 'shop/basic.html' %}
+
+<!-- Title -->
+    {% block title %} Checkout {% endblock %}
+
+{% block body %}
+	
+	<div class="container">
+		<div class="col my-4">
+        <h2>Step 1 - MKart Express Checkout - Review Your Cart Items</h2>
+        <div class='my-4'>
+            <ul class="list-group" id="items">
+                
+            </ul>
+
+            <nav aria-label="breadcrumb">
+			  <ol class="breadcrumb" mt-3>
+			    <li class="breadcrumb-item active" aria-current="page">Your cart total is Rs. <b><span id='totalPrice'></span></b> Enter your details below and place your order. Thanks for using MKart.</li>
+			  </ol>
+			</nav>
+            
+        </div>
+    </div>
+    <div class="col my-4">
+        <h2>Step 2 - Enter Address & Other Details:</h2>
+        <form method="post" action="/shop/checkout/">{% csrf_token %}
+            <input type="hidden" name="itemsJson" id="itemsJson">
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputname">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="inputEmail4">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputAddress">Address</label>
+                <input type="text" class="form-control" id="address1" name="address1" placeholder="1234 Main St">
+            </div>
+            <div class="form-group">
+                <label for="inputAddress2">Address line 2</label>
+                <input type="text" class="form-control" id="address2" name="address2" placeholder="Apartment, studio, or floor">
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="inputCity">City</label>
+                    <input type="text" class="form-control" id="city" name="city">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="inputState">State</label>
+                    <input type="text" class="form-control" id="state" name="state"  placeholder="Enter State">
+                </div>
+                <div class="form-group col-md-2">
+                    <label for="inputZip">Zip</label>
+                    <input type="text" class="form-control" id="zip_code" name="zip_code">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputZip">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" name="phone">
+            </div>
+            <button type="submit" class="btn btn-primary">Place Order</button>
+        </form>
+    </div>
+	</div>
+
+{% endblock %}
+
+{% block js %}
+	
+	<script>
+		
+		if(localStorage.getItem('cart')==null)
+			{
+				var cart={};
+			}
+			else
+			{
+				cart = JSON.parse(localStorage.getItem('cart'));
+				updatePopover(cart);
+				console.log(cart);
+			}
+
+			if($.isEmptyObject(cart))
+			{
+				mystr = `<p>Your cart is empty, please add some items to your cart before checking out!</p>`
+    			$('#items').append(mystr);
+			}
+
+			else
+			{
+				var total = 0;
+				for(item in cart)
+				{
+					let name = cart[item][1];
+					let qty = cart[item][0];
+					let price = cart[item][2];
+					total=total+(qty*price);
+
+					mystr = `<li class="list-group-item d-flex justify-content-between align-items-center"> ${name} <span class="badge badge-primary badge-pill">${qty}</span></li>`;
+
+					$('#items').append(mystr);
+				}
+				document.getElementById('totalPrice').innerHTML = total;
+	             
+			}
+			
+			$('#popcart').popover('show');
+			$.fn.tooltip.Constructor.Default.whiteList.button = [];
+				
+			// Creating a cart in navbar as popover
+			function updatePopover(cart)
+			{
+				console.log('inside popover');
+
+				var popStr="";
+
+				popStr = popStr + "<h5>Cart for your items in MKart</h5> <div class='mx-2 my-3'>";
+
+				var i=1;
+				var sum = 0;
+
+				for(var item in cart)
+				{
+					sum=sum+cart[item][0];
+
+					popStr = popStr + "<b>" + i + ". </b>";
+					popStr = popStr + cart[item][1].slice(0,20) + "... Qty : " + cart[item][0] +"<br>";
+					i=i+1;
+				}
+				popStr = popStr + "</div> <a href='/shop/checkout'><button class='btn btn-primary' id ='checkout'>Checkout</button></a> <button class='btn btn-primary' onclick='clearCart()' id ='clearCart'>Clear Cart</button>  ";
+   
+				document.getElementById('cart').innerHTML = sum;
+				$('#popcart').popover('show');
+				$.fn.tooltip.Constructor.Default.whiteList.button = [];
+				
+				console.log(popStr);
+				document.getElementById('popcart').setAttribute('data-content',popStr);
+			}
+
+			// order alert
+			$('#itemsJson').val(JSON.stringify(cart));
+
+			{% if thank %}
+
+				alert('Thanks for ordering with us. Your order is is {{id}}. Use it to track your order using our order tracker');
+				localStorage.clear();
+				document.location = "/shop";
+			{% endif %}
+
+	</script>
+
+{% endblock %}

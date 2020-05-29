@@ -1,0 +1,105 @@
+<!-- Basic.html -->
+{% extends 'shop/basic.html' %}
+
+<!-- Title -->
+    {% block title %} About {% endblock %}
+
+<!-- Body -->
+	{% block body %}
+
+		{% load static %}
+
+		<main role="main">
+
+		  <!-- Main jumbotron for a primary marketing message or call to action -->
+		  <div class="jumbotron">
+		    <div class="container">
+		      <h1 class="display-3">MKart</h1>
+		      <p>MKart Private Limited, MKart is an Indian e-commerce company based in Bengaluru, India. It was founded by Sachin Bansal and Binny Bansal in 2007. The company initially focused on book sales, before expanding into other product categories such as consumer electronics, fashion, home essentials & groceries, and lifestyle products.
+
+				The service competes primarily with Amazon's Indian subsidiary, and the domestic rival Snapdeal.[5][6] As of March 2017, MKart held a 39.5% market share of India's e-commerce industry. MKart is significantly dominant in the sale of apparel (a position that was bolstered by its acquisitions of Myntra and Jabong.com), and was described as being "neck and neck" with Amazon in the sale of electronics and mobile phones.MKart also owns PhonePe, a mobile payments service based on the Unified Payments Interface (UPI).
+
+				In August 2018, U.S.-based retail chain Walmart acquired a 77% controlling stake in MKart for US$16 billion, valuing it at $20 billion.</p>
+		      <p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more &raquo;</a></p>
+		    </div>
+		  </div>
+
+		  <div class="container">
+		    <!-- Example row of columns -->
+		    <div class="row">
+		      <div class="col-md-4">
+		        <h2>Founder</h2>
+		        <h6>Manpreet Kaur</h6>
+		        <img src="/media/shop/crop pic.jpg" width="180px" height="180px">
+		        <p></p>
+		        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+		      </div>
+		      <div class="col-md-4">
+		        <h2>Products</h2>
+		        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.  non mi porta gravida at eget metus.  non mi porta gravida at eget metus. </p>
+		        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+		      </div>
+		      <div class="col-md-4">
+		        <h2>Certification</h2>
+		        <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+		        <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+		      </div>
+		    </div>
+
+		    <hr>
+
+		  </div> <!-- /container -->
+
+		</main>
+
+	{% endblock %}
+
+{% block js %}
+	
+	<script>
+		
+		if(localStorage.getItem('cart')==null)
+			{
+				var cart={};
+			}
+			else
+			{
+				cart = JSON.parse(localStorage.getItem('cart'));
+				updatePopover(cart);
+				console.log(cart);
+			}
+
+			$('#popcart').popover('show');
+			$.fn.tooltip.Constructor.Default.whiteList.button = [];
+				
+			// Creating a cart in navbar as popover
+			function updatePopover(cart)
+			{
+				console.log('inside popover');
+
+				var popStr="";
+
+				popStr = popStr + "<h5>Cart for your items in MKart</h5> <div class='mx-2 my-3'>";
+
+				var i=1;
+				var sum = 0;
+				for(var item in cart)
+				{
+					sum=sum+cart[item][0];
+					popStr = popStr + "<b>" + i + ". </b>";
+					popStr = popStr + cart[item][1].slice(0,20) + "... Qty : " + cart[item][0] +"<br>";
+					i=i+1;
+				}
+				popStr = popStr + "</div> <a href='/shop/checkout'><button class='btn btn-primary' id ='checkout'>Checkout</button></a> <button class='btn btn-primary' onclick='clearCart()' id ='clearCart'>Clear Cart</button>  ";
+   
+				document.getElementById('cart').innerHTML = sum;
+				$('#popcart').popover('show');
+				$.fn.tooltip.Constructor.Default.whiteList.button = [];
+				
+				console.log(popStr);
+				document.getElementById('popcart').setAttribute('data-content',popStr);
+			}
+
+	</script>
+
+{% endblock %}
